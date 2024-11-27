@@ -1,0 +1,29 @@
+services:
+  clickhouse-server:
+    image: clickhouse/clickhouse-server:head-alpine
+    ports:
+      - 8123:8123
+    volumes:
+      - ./create_tables_click.sql:/docker-entrypoint-initdb.d/create_tables_click.sql
+    networks:
+      - service-net
+     
+  db_postgres:
+    image: postgres:13.16-alpine3.20
+    volumes:
+      - ./create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    container_name: zubaev
+    environment:
+      POSTGRES_USER: zms
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: test_db
+    ports:
+      - "5434:5432"
+    restart: unless-stopped
+    networks:
+      - service-net  
+networks:
+  service-net:
+    driver: bridge
+volumes:
+  db-data:
